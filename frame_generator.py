@@ -1,4 +1,8 @@
+#!/usr/bin/env python3
+
 import random
+import unittest
+import unittest.mock as mock
 
 def generate_pair_of_pins(last_pair=False):
     """
@@ -18,7 +22,7 @@ def generate_pair_of_pins(last_pair=False):
                                 weights=[1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 5],
                                 k=1)
     if first_ball == 10:
-        second_ball = None
+        second_ball = random.randint(0, 10) if last_pair else None
     else:
         second_ball = random.choice([10 - first_ball, random.randrange(0, 10 - first_ball)])
 
@@ -35,3 +39,52 @@ def generate_frame():
     """
     return [generate_pair_of_pins() for _ in range(9)] + [generate_pair_of_pins(True)]
     
+
+@mock.patch('random.randint')
+@mock.patch('random.choice')
+@mock.patch('random.choices')
+class TestGeneratePairs(unittest.TestCase):
+
+    def test_generate_basic(self, mock_choices, mock_choice, mock_randint):
+        mock_choices.return_value = 5
+        mock_choice.return_value = 4
+        self.assertTupleEqual((5, 4), generate_pair_of_pins())
+
+    def test_generate_strike(self, mock_choices, mock_choice, mock_randint):
+        mock_choices.return_value = 10
+        self.assertTupleEqual((10, None), generate_pair_of_pins())
+
+    def test_generate_spare(self, mock_choices, mock_choice, mock_randint):
+        mock_choices.return_value = 8
+        mock_choice.return_value = 2
+        self.assertTupleEqual((8, 2), generate_pair_of_pins())
+
+    def test_generate_basic_as_last_pair(self, mock_choices, mock_choice, mock_randint):
+        mock_choices.return_value = 5
+        mock_choice.return_value = 4
+        self.assertTupleEqual((5, 4), generate_pair_of_pins(True))
+
+    def test_generate_strike_as_last_pair(self, mock_choices, mock_choice, mock_randint):
+        mock_choices.return_value = 10
+        mock_randint.side_effect = [4, 6]
+        self.assertTupleEqual((10, 4, 6), generate_pair_of_pins(True))
+
+    def test_generate_spare_as_last_pair(self, mock_choices, mock_choice, mock_randint):
+        mock_choices.return_value = 8
+        mock_choice.return_value = 2
+        mock_randint.return_value = 3
+        self.assertTupleEqual((8, 2, 3), generate_pair_of_pins(True))
+
+
+class TestGenerateFrame(unittest.TestCase):
+
+    @mock.patch('__main__.generate_pair_of_pins')
+    def test_generate_frame(self, mock_pairs):
+        scores = [(4, 5), (4, 0), (10, None), (8, 2), (7, 1), (3, 6), (0, 0), (1, 0), (10, None), (9, 1)]
+        mock_pairs.side_effect = scores
+        self.assertListEqual(scores, generate_frame())
+
+
+if __name__ == '__main__':
+    unittest.main()
+
