@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+from itertools import zip_longest
+
 def score_game(frame):
     """
     Args : frame (list)
@@ -29,22 +33,28 @@ def score_game(frame):
                     (8, 2), (0, 6), (10, None), (10, None), (9, 1, 1)])
     150
 
+    Test with frame ending in a spare, resulting in a fill ball, which is missed
+        Note: Frame scores = [20, 19, 9, 18, 8, 10, 6, 29, 20, 10]
+    >>> score_game([(10, None), (7, 3), (9, 0), (10, None), (0, 8), \
+                    (8, 2), (0, 6), (10, None), (10, None), (9, 1, 0)])
+    149
+
     Test perfect game:
         Note: Frame scores = [30, 30, 30, 30, 30, 30, 30, 30, 30, 30]
     >>> score_game([(10, None), (10, None), (10, None), (10, None), (10, None), \
                     (10, None), (10, None), (10, None), (10, None), (10, 10, 10)])
     300
     """
-    s = 0
-    on_strike = on_spare = False
-    # pdb.set_trace()
-    for pin in frame:
-        s += pin[0] * (2 if on_strike or on_spare else 1)
-        s += (pin[1] if pin[1] else 0) * (2 if on_strike else 1)
-        on_strike = pin[0] == 10
-        on_spare = pin[0] != 10 and sum(x if x else 0 for x in pin) == 10
-    return s
+    def score_pair(pair1, pair2, pair3):
+        if pair1 == (10, None):
+            return 10 + pair2[0] + (pair2[1] if pair2[1] else pair3[0])  # score strikes
+        elif len(pair1) == 2 and sum(pair1) == 10:
+            return 10 + pair2[0]  # score spares
+        else:
+            return sum(pair1)  # scores non-strikes/spares
+    return sum([score_pair(p1, p2, p3) for p1, p2, p3 in zip_longest(frame, frame[1:], frame[2:])])
+
 
 if __name__ == '__main__':
-    import pdb
     import doctest; doctest.testmod()
+
