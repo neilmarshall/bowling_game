@@ -21,6 +21,7 @@ def generate_pair_of_pins(last_pair=False):
     first_ball = random.choices(population=list(range(11)),
                                 weights=[1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 5],
                                 k=1)
+
     if first_ball == 10:
         second_ball = random.randint(0, 10) if last_pair else None
     else:
@@ -83,6 +84,11 @@ class TestGenerateFrame(unittest.TestCase):
         scores = [(4, 5), (4, 0), (10, None), (8, 2), (7, 1), (3, 6), (0, 0), (1, 0), (10, None), (9, 1)]
         mock_pairs.side_effect = scores
         self.assertListEqual(scores, generate_frame())
+
+    def test_generate_frame_complete(self):
+        random.seed(0)
+        frame = generate_frame()
+        print(frame)
 
 
 if __name__ == '__main__':
