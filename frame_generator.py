@@ -49,32 +49,32 @@ class TestGeneratePairs(unittest.TestCase):
     def test_generate_basic(self, mock_choices, mock_choice, mock_randint):
         mock_choices.return_value = [5]
         mock_choice.return_value = 4
-        self.assertTupleEqual((5, 4), generate_pair_of_pins())
+        self.assertTupleEqual(generate_pair_of_pins(), (5, 4))
 
     def test_generate_strike(self, mock_choices, mock_choice, mock_randint):
         mock_choices.return_value = [10]
-        self.assertTupleEqual((10, None), generate_pair_of_pins())
+        self.assertTupleEqual(generate_pair_of_pins(), (10, None))
 
     def test_generate_spare(self, mock_choices, mock_choice, mock_randint):
         mock_choices.return_value = [8]
         mock_choice.return_value = 2
-        self.assertTupleEqual((8, 2), generate_pair_of_pins())
+        self.assertTupleEqual(generate_pair_of_pins(), (8, 2))
 
     def test_generate_basic_as_last_pair(self, mock_choices, mock_choice, mock_randint):
         mock_choices.return_value = [5]
         mock_choice.return_value = 4
-        self.assertTupleEqual((5, 4), generate_pair_of_pins(True))
+        self.assertTupleEqual(generate_pair_of_pins(True), (5, 4))
 
     def test_generate_strike_as_last_pair(self, mock_choices, mock_choice, mock_randint):
         mock_choices.return_value = [10]
         mock_randint.side_effect = [4, 6]
-        self.assertTupleEqual((10, 4, 6), generate_pair_of_pins(True))
+        self.assertTupleEqual(generate_pair_of_pins(True), (10, 4, 6))
 
     def test_generate_spare_as_last_pair(self, mock_choices, mock_choice, mock_randint):
         mock_choices.return_value = [8]
         mock_choice.return_value = 2
         mock_randint.return_value = 3
-        self.assertTupleEqual((8, 2, 3), generate_pair_of_pins(True))
+        self.assertTupleEqual(generate_pair_of_pins(True), (8, 2, 3))
 
 
 class TestGenerateFrame(unittest.TestCase):
@@ -83,7 +83,7 @@ class TestGenerateFrame(unittest.TestCase):
     def test_generate_frame(self, mock_pairs):
         scores = [(4, 5), (4, 0), (10, None), (8, 2), (7, 1), (3, 6), (0, 0), (1, 0), (10, None), (9, 0)]
         mock_pairs.side_effect = scores
-        self.assertListEqual(scores, generate_frame())
+        self.assertListEqual(generate_frame(), scores)
 
 
 class TestGenerateFullTests(unittest.TestCase):
