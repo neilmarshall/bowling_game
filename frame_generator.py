@@ -9,7 +9,8 @@ def generate_pair_of_pins(last_pair=False):
     Generate pairs of pins as follows:
     
         First ball is a random choice from [0, ..., 10], with greater weights
-        for [6, ..., 9] and greatest weight for 10
+        for [6, ..., 9] and greatest weight for 10; occassionally, a foul ball
+        will be thrown - denoted 'F'
         
         If first ball is 10 then second ball is None, else it is a 50/50 choice
         from (a) 10 - value of first ball, and (b) a random choice from the
@@ -18,20 +19,27 @@ def generate_pair_of_pins(last_pair=False):
         If last_pair=True and sum of pair is 10, add a final ball randomly
         selected from interval [0, ..., 10]
     """
-    first_ball = random.choices(population=list(range(11)),
-                                weights=[1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 5],
+    possible_rolls = list(range(11)) + ['F']
+    first_ball = random.choices(population=possible_rolls,
+                                weights=[1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 5, 2],
                                 k=1).pop()
 
     if first_ball == 10:
-        second_ball = random.randint(0, 10) if last_pair else None
+        second_ball = random.choice(possible_rolls) if last_pair else None
+    elif first_ball == 'F':
+        second_ball = random.choice(possible_rolls)
     else:
-        second_ball = random.choice([10 - first_ball, random.randrange(0, 10 - first_ball)])
+        second_ball = random.choice([10 - first_ball,
+                                     random.randrange(0, 10 - first_ball,
+                                     'F')])
 
     if last_pair and (first_ball == 10 or first_ball + second_ball == 10):
-        fill_ball = random.randint(0, 10)
-        return (first_ball, second_ball, fill_ball)
-    else:
-        return (first_ball, second_ball)
+        if first_ball == 10: 
+            fill_ball = random.choice(possible_rolls)
+        elif first_ball != 'F' and second_ball != 'F' and first_ball + second_ball == 10:
+            fill_ball = random.choice(possible_rolls)
+            return (first_ball, second_ball, fill_ball)
+    return (first_ball, second_ball)
 
 
 def generate_frame():
