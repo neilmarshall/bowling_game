@@ -44,6 +44,12 @@ def score_game(frame):
     >>> score_game([(10, None), (10, None), (10, None), (10, None), (10, None), \
                     (10, None), (10, None), (10, None), (10, None), (10, 10, 10)])
     300
+
+    Test first frame produced by frame generator:
+        Note: Frame scores = [27, 18, 8, 8, 15, 5, 18, 8, 2, 7]
+    >>> score_game([(10, None), (10, None), (7, 1), (7, 1), (6, 4), (5, 0), \
+                    (10, None), (8, 0), (1, 1), (7, 0)])
+    116
     """
     def score_pair(pair1, pair2, pair3):
         if pair1 == (10, None):
