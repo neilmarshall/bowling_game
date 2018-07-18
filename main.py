@@ -53,7 +53,7 @@ def score_game(frame):
     """
     def score_pair(pair1, pair2, pair3):
         if pair1 == (10, None):
-            return 10 + pair2[0] + (pair2[1] if pair2[1] else pair3[0])  # score strikes
+            return 10 + pair2[0] + (pair2[1] if pair2[1] is not None else pair3[0])  # score strikes
         elif len(pair1) == 2 and sum(pair1) == 10:
             return 10 + pair2[0]  # score spares
         else:
