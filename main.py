@@ -1,4 +1,4 @@
-score_frame#!/usr/bin/env python3.6
+#!/usr/bin/env python3.6
 
 from itertools import zip_longest
 
