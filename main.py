@@ -71,6 +71,20 @@ def score_game(frame):
     return sum([score_pair(p1, p2, p3) for p1, p2, p3 in zip_longest(frame, frame[1:], frame[2:], fillvalue=(None, None))])
 
 
+def calculate_total_pins(series):
+    """
+    >>> frame1 = ([(10, None), (7, 3), (9, 0), (10, None), (0, 8), \
+                   (8, 2), (0, 6), (10, None), (10, None), (9, 1, 1)])
+    >>> frame2 = ([(10, None), (10, None), (7, 'F'), (8, 1), (6, 'F'), \
+                   (3, 7), (9, 'F'), ('F', 9), (10, None), (6, 'F')])
+    >>> frame3 = ([(10, None), (10, None), (10, None), (10, None), (10, None), \
+                   (10, None), (10, None), (10, None), (10, None), (10, 10, 10)])
+    >>> calculate_total_pins((frame1, frame2, frame3))
+    300
+    """
+    return sum(sum(roll for turn in frame for roll in turn if roll is not None and roll != 'F') for frame in series)
+
+
 if __name__ == '__main__':
     import doctest; doctest.testmod(verbose=True)
 
