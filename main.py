@@ -98,19 +98,19 @@ def score_match(series):
 
     Function returns who won the match.
 
-    >>> frame1 = ([(10, None), (7, 3), (9, 0), (10, None), (0, 8), \
-                   (8, 2), (0, 6), (10, None), (10, None), (9, 1, 1)])
-    >>> frame2 = ([(8, 2), (8, 0), (10, None), (6, 1), (7, 3), \
-                   (0, 10), (0, 6), (9, 1), (10, None), (5, 2)])
-    >>> frame3 = ([(10, None), (7, 3), (9, 0), (10, None), (0, 8), \
-                   (8, 2), (0, 6), (10, None), (10, None), (10, 8, 1)])
+    >>> frame1 = (((10, None), (7, 3), (9, 0), (10, None), (0, 8), \
+                   (8, 2), (0, 6), (10, None), (10, None), (9, 1, 1)))
+    >>> frame2 = (((8, 2), (8, 0), (10, None), (6, 1), (7, 3), \
+                   (0, 10), (0, 6), (9, 1), (10, None), (5, 2)))
+    >>> frame3 = (((10, None), (7, 3), (9, 0), (10, None), (0, 8), \
+                   (8, 2), (0, 6), (10, None), (10, None), (10, 8, 1)))
 
-    >>> frameA = ([(8, 1), (8, 0), (1, 0), (6, 1), (6, 3), \
-                   (0, 0), (0, 6), (4, 1), (4, 1), (5, 2)])
-    >>> frameB = ([(10, None), (10, None), (7, 'F'), (8, 1), (6, 'F'), \
-                   (3, 7), (9, 'F'), ('F', 9), (10, None), (6, 'F')])
-    >>> frameC = ([(10, None), (7, 3), (9, 0), (10, None), (0, 8), \
-                   (8, 2), (0, 6), (10, None), (10, None), (10, 8, 1)])
+    >>> frameA = (((8, 1), (8, 0), (1, 0), (6, 1), (6, 3), \
+                   (0, 0), (0, 6), (4, 1), (4, 1), (5, 2)))
+    >>> frameB = (((10, None), (10, None), (7, 'F'), (8, 1), (6, 'F'), \
+                   (3, 7), (9, 'F'), ('F', 9), (10, None), (6, 'F')))
+    >>> frameC = (((10, None), (7, 3), (9, 0), (10, None), (0, 8), \
+                   (8, 2), (0, 6), (10, None), (10, None), (10, 8, 1)))
 
     Scores for the frames are ([150, 120, 167], [57, 125, 167])
     Total pins knocked down are (284, 245)
@@ -118,6 +118,27 @@ def score_match(series):
 
     >>> score_match(((frame1, frame2, frame3), (frameA, frameB, frameC)))
     'Player 1 won!'
+
+    >>> frame1 = ((10, None), (6, 2), (9, 1), (9, 0), (10, None),\
+                  (9, 'F'), (5, 5), (6, 1), ('F', 1), (8, 0))
+    >>> frame2 = ((4, 3), (9, 'F'), (0, 10), (9, 0), (7, 1),\
+                  (7, 'F'), (10, None), (10, None), (3, 7), (9, 0))
+    >>> frame3 = ((8, 2), (6, 'F'), (7, 0), ('F', 9), (6, 1), \
+                  ('F', 1), (10, None), (6, 2), (9, 1), (6, 4, 0))
+
+    >>> frameA = ((5, 5), (7, 1), (10, None), ('F', 2), (7, 1), \
+                  (10, None), (10, None), (7, 3), (4, 6), (5, 'F'))
+    >>> frameB = ((9, 'F'), ('F', 10), (6, 'F'), (9, 1), (7, 1), \
+                  ('F', 3), ('F', 10), (7, 3), (10, None), (9, 'F'))
+    >>> frameC = ((8, 2), (9, 'F'), (5, 'F'), ('F', 1), (10, None), \
+                  (1, 7), (10, None), ('F', 0), (5, 2), (10, 5, 6))
+
+    Scores for the frames are ([114, 130, 98], [128, 124, 98])
+    Total pins knocked down are (249, 249)
+    Points are therefore {Player 1: [0, 2, 1, 0], Player 2: [2, 0, 1, 0]}
+
+    >>> score_match(((frame1, frame2, frame3), (frameA, frameB, frameC)))
+    'The match is a draw!'
     """
     scores = {i: tuple(score_frame(frame) for frame in series[i]) for i in range(2)}
 
