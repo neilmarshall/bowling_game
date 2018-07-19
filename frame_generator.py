@@ -47,8 +47,18 @@ def generate_frame():
     """
     Return list of 10 pairs of pins (last pair may include a fill ball)
     """
-    return [generate_pair_of_pins() for _ in range(9)] + [generate_pair_of_pins(True)]
+    return tuple([generate_pair_of_pins() for _ in range(9)] +
+                 [generate_pair_of_pins(True)])
     
+
+def generate_series():
+    """
+    Return a tuple of tuples - the outer tuple represents one series per player,
+    and the inner tuples represent frames per series
+    """
+    return (tuple(generate_frame() for _ in range(3)),
+            tuple(generate_frame() for _ in range(3)))
+
 
 @mock.patch('random.choice')
 @mock.patch('random.choices')
@@ -129,9 +139,18 @@ class TestGenerateFrame(unittest.TestCase):
 
     @mock.patch('__main__.generate_pair_of_pins')
     def test_generate_frame(self, mock_pairs):
-        scores = [(4, 5), (4, 0), (10, None), (8, 2), (7, 1), (3, 6), (0, 0), (1, 0), (10, None), (9, 0)]
+        scores = ((4, 5), (4, 0), (10, None), (8, 2), (7, 1), (3, 6), (0, 0), (1, 0), (10, None), (9, 0))
         mock_pairs.side_effect = scores
-        self.assertListEqual(generate_frame(), scores)
+        self.assertTupleEqual(generate_frame(), scores)
+
+
+class TestGenerateSeries(unittest.TestCase):
+
+    @mock.patch('__main__.generate_frame')
+    def test_assert_generate_frame_called(self, mock_frames):
+        series = generate_series()
+        self.assertEqual(mock_frames.call_count, 6)
+        self.assertIsInstance(series, tuple)
 
 
 class TestGenerateFullTests(unittest.TestCase):
@@ -149,7 +168,19 @@ class TestGenerateFullTests(unittest.TestCase):
 
     def test_generate_frame_complete(self):
         frame = generate_frame()
-        self.assertListEqual(frame, [(10, None), (10, None), (7, 'F'), (8, 1), (6, 'F'), (3, 7), (9, 'F'), ('F', 9), (10, None), (6, 'F')])
+        self.assertTupleEqual(frame, ((10, None), (10, None), (7, 'F'), (8, 1), (6, 'F'), (3, 7), (9, 'F'), ('F', 9), (10, None), (6, 'F')))
+
+    def test_generate_series_complete(self):
+        series = generate_series()
+        self.assertEqual(len(series), 2)
+        self.assertEqual(len(series[0]), 3)
+        self.assertEqual(len(series[1]), 3)
+        self.assertTupleEqual(series[0][0][0], (10, None))
+        self.assertTupleEqual(series[0][1][1], (7, 'F'))
+        self.assertTupleEqual(series[0][2][2], (5, 'F'))
+        self.assertTupleEqual(series[1][0][-1], (10, 8, 4))
+        self.assertTupleEqual(series[1][1][-1], (7, 0))
+        self.assertTupleEqual(series[1][2][-1], (10, 1, 0))
 
 
 if __name__ == '__main__':
