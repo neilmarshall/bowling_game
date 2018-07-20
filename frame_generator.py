@@ -1,8 +1,11 @@
 #!/usr/bin/env python3.6
 
+import doctest
 import random
 import unittest
 import unittest.mock as mock
+
+import main
 
 def generate_pair_of_pins(last_pair=False):
     """
@@ -181,6 +184,11 @@ class TestGenerateFullTests(unittest.TestCase):
         self.assertTupleEqual(series[1][0][-1], (10, 8, 4))
         self.assertTupleEqual(series[1][1][-1], (7, 0))
         self.assertTupleEqual(series[1][2][-1], (10, 1, 0))
+
+
+def load_tests(loader, tests, ignore):
+    tests.addTests(doctest.DocTestSuite(main))
+    return tests
 
 
 if __name__ == '__main__':
