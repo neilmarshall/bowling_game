@@ -96,7 +96,8 @@ def score_match(series):
     frames (bonus points for strikes and spares do NOT count, but fill balls do) receives
     an additional point. No points are awarded here in the event of a tie.
 
-    Function returns who won the match.
+    Function returns a data structure showing frame scores and total points for
+    each player as well as who won the match.
 
     >>> frame1 = (((10, None), (7, 3), (9, 0), (10, None), (0, 8), \
                    (8, 2), (0, 6), (10, None), (10, None), (9, 1, 1)))
@@ -116,7 +117,21 @@ def score_match(series):
     Total pins knocked down are (284, 245)
     Points are therefore {Player 1: [2, 0, 1, 1], Player 2: [0, 2, 1, 0]}
 
-    >>> score_match(((frame1, frame2, frame3), (frameA, frameB, frameC)))
+    >>> results = score_match(((frame1, frame2, frame3), (frameA, frameB, frameC)))
+
+    >>> results['player 1']['frames']
+    [150, 120, 167]
+
+    >>> results['player 2']['frames']
+    [57, 125, 167]
+
+    >>> results['player 1']['points']
+    [2, 0, 1, 1]
+
+    >>> results['player 2']['points']
+    [0, 2, 1, 0]
+
+    >>> results['result']
     'Player 1 won!'
 
     >>> frame1 = ((10, None), (6, 2), (9, 1), (9, 0), (10, None),\
@@ -137,10 +152,24 @@ def score_match(series):
     Total pins knocked down are (249, 249)
     Points are therefore {Player 1: [0, 2, 1, 0], Player 2: [2, 0, 1, 0]}
 
-    >>> score_match(((frame1, frame2, frame3), (frameA, frameB, frameC)))
+    >>> results = score_match(((frame1, frame2, frame3), (frameA, frameB, frameC)))
+
+    >>> results['player 1']['frames']
+    [114, 130, 98]
+
+    >>> results['player 2']['frames']
+    [128, 124, 98]
+
+    >>> results['player 1']['points']
+    [0, 2, 1, 0]
+
+    >>> results['player 2']['points']
+    [2, 0, 1, 0]
+
+    >>> results['result']
     'The match is a draw!'
     """
-    scores = {i: tuple(score_frame(frame) for frame in series[i]) for i in range(2)}
+    scores = {i: [score_frame(frame) for frame in series[i]] for i in range(2)}
 
     points = {i: [] for i in range(2)}
 
@@ -157,19 +186,20 @@ def score_match(series):
 
     total_pins = {i: calculate_total_pins(series[i]) for i in range(2)}
 
-    if total_pins[0] > total_pins[1]:
-        points[0].append(1)
-        points[1].append(0)
-    elif total_pins[0] < total_pins[1]:
-        points[0].append(0)
-        points[1].append(1)
+    points[0].append(1 if total_pins[0] > total_pins[1] else 0)
+    points[1].append(1 if total_pins[0] < total_pins[1] else 0)
+
+    results = {'player {}'.format(i + 1): {'frames': scores[i],
+                                           'points': points[i]} for i in range(2)}
 
     if sum(points[0]) > sum(points[1]):
-        return "Player 1 won!"
+        results['result'] =  "Player 1 won!"
     elif sum(points[0]) < sum(points[1]):
-        return "Player 2 won!"
+        results['result'] =  "Player 2 won!"
     else:
-        return "The match is a draw!"
+        results['result'] =  "The match is a draw!"
+
+    return results
 
 
 if __name__ == '__main__':
